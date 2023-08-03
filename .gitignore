@@ -49,3 +49,10 @@ _deps
 *.exe
 *.out
 *.app
+
+# Compiled shaders
+*.bin 
+
+# Caches
+.vscode/
+.cache/

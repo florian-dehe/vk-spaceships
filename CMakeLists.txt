@@ -15,7 +15,7 @@ find_package(Vulkan)
 # find_package(OpenGL)
 
 # Sources
-set(SRCS src/main.cpp)
+set(SRCS src/main.cpp src/window.cpp src/renderer.cpp)
 
 
 add_executable(vk-spaceships ${SRCS})

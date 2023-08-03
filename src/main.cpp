@@ -3,28 +3,15 @@
 #include <iostream>
 #include <fstream>
 
-#include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_X11
-#include <GLFW/glfw3native.h>
-
 #include "bgfx/defines.h"
 #include "bgfx/platform.h"
 #include "bx/math.h"
 #include "bgfx/bgfx.h"
 
-#define W_WIDTH 1600
-#define W_HEIGHT 900
+#include "window.h"
+#include "renderer.h"
 
 std::string SHADER_FILE_PATH = "assets/shaders/";
-
-void resize_callback(GLFWwindow *window, int width, int height) {
-  bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
-  bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
-}
-
-void error_callback(int error, const char* description) {
-    std::cerr << "GLFW Error: " << description << std::endl;
-}
 
 bgfx::ShaderHandle loadShader(const char* filepath) {
     char* data = new char[2048];
@@ -57,54 +44,24 @@ static PosColorVertex vertices[] = {
     { -0.5f, -0.5f, 0.0f, 0xff0000ff }  // Vertex 3: Red
 };
 
-int main(void) {
-    GLFWwindow *window;
+window win;
+renderer rend;
 
+int main(void) {
     std::cout << "Hello vk-spaceships!" << std::endl;
 
-    if (!glfwInit()) {
-        std::cerr << "GLFW Init Failed !\n";
-        return -1;
-    }
+    win.init();
 
-    if (!glfwVulkanSupported()) {
-        std::cerr << "Vulkan not supported !\n";
-        return -1;
-    }
-
-    glfwSetErrorCallback(error_callback);
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    window = glfwCreateWindow(W_WIDTH, W_HEIGHT, "Spaceships", NULL, NULL);
-    if (!window) {
-        std::cerr << "GLFW Window creation failed !\n";
+    if (!win.window) {
+        std::cerr << "Init window failed!\n";
         return -1;
     }
 
     // bgfx stuff
-    bgfx::renderFrame();
+    rend.init(win);
+    win.setResizeCallback(renderer::resize_callback);
 
-    bgfx::Init initBgfx;
-    initBgfx.type = bgfx::RendererType::Vulkan;
-
-    initBgfx.platformData.nwh = (void*) (std::uintptr_t) glfwGetX11Window(window);
-    initBgfx.platformData.ndt = glfwGetX11Display();
-
-    initBgfx.resolution.width = W_WIDTH;
-    initBgfx.resolution.height = W_HEIGHT;
-    initBgfx.resolution.reset = BGFX_RESET_VSYNC;
-
-    if(!bgfx::init(initBgfx)) {
-        std::cerr << "BGFX init failed !\n";
-        return -1;
-    }
-    bgfx::setDebug(BGFX_DEBUG_TEXT /*| BGFX_DEBUG_STATS*/);
-
-    glfwSetFramebufferSizeCallback(window, resize_callback);
-
-    // Clear
-    bgfx::setViewClear(0, BGFX_CLEAR_COLOR);
-    bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
+    rend.clear();
 
     bgfx::VertexLayout triangleLayout;
     triangleLayout.begin()
@@ -119,7 +76,7 @@ int main(void) {
 
     bgfx::touch(0);
 
-    while(!glfwWindowShouldClose(window)) {
+    while(!glfwWindowShouldClose(win.window)) {
         glfwPollEvents();
 
         const bx::Vec3 at  = { 0.0f, 0.0f,  0.0f };
@@ -163,10 +120,9 @@ int main(void) {
 
     bgfx::destroy(vbh);
     bgfx::destroy(program);
-    bgfx::shutdown();
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    rend.destroy();
+    win.destroy();
 
     return 0;
 }
