@@ -13,7 +13,7 @@ void renderer::resize_callback(GLFWwindow* _, int width, int height) {
     bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
 }
 
-void renderer::init(const window& win) {
+void renderer::init(window& win) {
     // No multithreading
     bgfx::renderFrame();
 
@@ -32,6 +32,7 @@ void renderer::init(const window& win) {
         return;
     }
     bgfx::setDebug(BGFX_DEBUG_TEXT /*| BGFX_DEBUG_STATS*/);
+    win.setResizeCallback(renderer::resize_callback);
 }
 
 void renderer::clear() {

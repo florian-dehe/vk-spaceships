@@ -7,7 +7,7 @@
 struct renderer {
     static void resize_callback(GLFWwindow*, int, int);
 
-    void init(const window&);
+    void init(window&);
     void clear();
     void destroy();
 };
