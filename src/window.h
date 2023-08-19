@@ -3,17 +3,21 @@
 
 #include <GLFW/glfw3.h>
 
-#define W_WIDTH 1600
-#define W_HEIGHT 900
+class GameWindow {
+public:
+    static const char* TITLE;
 
-struct window {
+    bool Init();
+    void Destroy();
+
+    void SetResizeCallback(GLFWframebuffersizefun);
+    void SetInputCallback(GLFWkeyfun input);
+    bool Refresh();
+
+    void* GetNativeWindow();
+    void* GetNativeDisplay();
+private:
     GLFWwindow *window = nullptr;
-    void* nat_win = nullptr;
-    void* nat_dis = nullptr;
-
-    void init();
-    void setResizeCallback(GLFWframebuffersizefun);
-    void destroy();
 };
 
 #endif

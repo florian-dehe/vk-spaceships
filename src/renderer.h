@@ -1,16 +1,16 @@
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
+#include <GLFW/glfw3.h>
+#include <cstdint>
+
 #include "bgfx/bgfx.h"
 #include "window.h"
-#include <GLFW/glfw3.h>
 
+struct Renderer {
+    Renderer() = delete;
+    ~Renderer() = delete;
 
-class Renderer {
-private:
-    Renderer() = default;
-    ~Renderer() = default;
-public:
     struct PosColorVertex {
         float x; // Position
         float y;
@@ -30,18 +30,18 @@ public:
         static bgfx::VertexLayout layout;
     };
 
-    // Constants
+    static const uint16_t WIDTH;
+    static const uint16_t HEIGHT;
     static const PosColorVertex SPRITE_COLOR_VTX[4];
     static const PosTexCoordVertex SPRITE_TEX_VTX[4];
     static const uint16_t SPRITE_IDX[6];
 
-    // Callbacks
-    static void resize_callback(GLFWwindow*, int, int);
+    static float viewMtx[16];
+    static float projectionMtx[16];
 
-    // Lifecycle
-    static void init(window&);
-    static void clear();
-    static void destroy();
+    static bool Init(GameWindow&);
+    static void Clear();
+    static void Destroy();
 };
 
 #endif // RENDERER_H_
