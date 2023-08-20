@@ -9,6 +9,8 @@
 #include "bgfx/platform.h"
 #include "bx/math.h"
 #include "game.h"
+#include "resources.h"
+#include "systems/sprite_renderer.h"
 #include "window.h"
 
 const uint16_t Renderer::WIDTH = 1600;
@@ -50,9 +52,8 @@ bool Renderer::Init(GameWindow& win) {
                 -10.0f, 10.0f,
                 0.f, bgfx::getCaps()->homogeneousDepth);
 
-    // Init structures
-    PosColorVertex::init();
-    PosTexCoordVertex::init();
+    // Init Modules
+    SpriteRenderer::Init();
 
     return true;
 }
@@ -63,42 +64,8 @@ void Renderer::Clear() {
 }
 
 void Renderer::Destroy() {
+    // Destroy Modules
+    SpriteRenderer::Destroy();
+
     bgfx::shutdown();
 }
-
-bgfx::VertexLayout Renderer::PosColorVertex::layout;
-void Renderer::PosColorVertex::init() {
-    layout
-        .begin()
-        .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-        .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true, true)
-        .end();
-}
-
-bgfx::VertexLayout Renderer::PosTexCoordVertex::layout;
-void Renderer::PosTexCoordVertex::init() {
-    layout
-        .begin()
-        .add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-        .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Int16, true, true)
-        .end();
-}
-
-const Renderer::PosColorVertex Renderer::SPRITE_COLOR_VTX[4] = {
-    {  0.5f,  0.5f, 0xffff0000 }, // right, top; blue
-    {  0.5f, -0.5f, 0xff00ff00 }, // right, bottom; green
-    { -0.5f, -0.5f, 0xff0000ff }, // left, bottom; red
-    { -0.5f,  0.5f, 0xff0000ff }  // left, top; red
-};
-
-const Renderer::PosTexCoordVertex Renderer::SPRITE_TEX_VTX[4] = {
-    {  0.5f,  0.5f, 0x7fff,      0 }, // right, top
-    {  0.5f, -0.5f, 0x7fff, 0x7fff }, // right, bottom
-    { -0.5f, -0.5f,      0, 0x7fff }, // left, bottom
-    { -0.5f,  0.5f,      0,      0 }  // left, top
-};
-
-const uint16_t Renderer::SPRITE_IDX[6] = {
-    0, 1, 2,
-    2, 3, 0
-};

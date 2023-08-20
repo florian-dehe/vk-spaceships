@@ -17,13 +17,15 @@ add_subdirectory(libs/entt)
 
 # Sources
 set(SRCS src/main.cpp
+         src/game.cpp
          src/window.cpp
          src/renderer.cpp
          src/resources.cpp
-         src/game.cpp
-         src/input.cpp)
-
+         src/input.cpp
+         src/systems/sprite_renderer.cpp
+         src/sprite.cpp
+      )
 
 add_executable(vk-spaceships ${SRCS})
 target_link_libraries(vk-spaceships bx bgfx glfw Vulkan::Vulkan EnTT::EnTT)
-target_include_directories(vk-spaceships PUBLIC libs)
+target_include_directories(vk-spaceships PUBLIC libs ${CMAKE_SOURCE_DIR}/src)

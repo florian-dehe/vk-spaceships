@@ -15,23 +15,38 @@
 #include "game.h"
 
 int main(void) {
+    Game game;
+    GameWindow win;
+
     std::cout << "Hello vk-spaceships!" << std::endl;
 
-    bool isRunning = true;
-    double delta = 0.0;
-    Game game;
+    if (!win.Init()) {
+        std::cerr << "Init window failed!\n";
+        return -1;
+    }
+
+    Input::Init(win);
+
+    if (!Renderer::Init(win)) {
+        std::cerr << "Init renderer failed!\n";
+        return -1;
+    }
+    Renderer::Clear();
 
     if (!game.Init()) {
         return -1;
     }
 
+    bool isRunning = true;
+    double delta = 0.0;
     while (isRunning) {
         auto startTime = std::chrono::high_resolution_clock::now();
 
         // Game Loop
         game.OnInput();
-        isRunning = game.Update(delta);
+        game.Update(delta);
         game.Render();
+        isRunning = win.Refresh();
 
         // Frame delta
         auto now = std::chrono::high_resolution_clock::now();
@@ -39,5 +54,6 @@ int main(void) {
     }
 
     game.Destroy();
+    win.Destroy();
     return 0;
 }

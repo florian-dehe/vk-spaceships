@@ -12,7 +12,7 @@
 const char* GameWindow::TITLE = "Spaceships";
 
 void error_callback(int error, const char* description) {
-    std::cerr << "GLFW Error: " << description << std::endl;
+    std::cerr << "GLFW Error: " << error << ", " << description << std::endl;
 }
 
 bool GameWindow::Init() {

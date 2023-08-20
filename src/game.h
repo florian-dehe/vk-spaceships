@@ -3,8 +3,11 @@
 
 #include <entt/entt.hpp>
 
+#include "bgfx/bgfx.h"
 #include "bx/math.h"
+#include "components/transform.h"
 #include "entt/entity/fwd.hpp"
+#include "entt/entity/helper.hpp"
 #include "window.h"
 #include "input.h"
 
@@ -19,27 +22,24 @@ public:
 
     // Input at the begining of the game loop
     void OnInput();
-
-    // Callback for window resize
-    void OnWindowResize(int width, int height);
-
-    // Game Loop
-    // Returns: true if window should close
-    bool Update(float dt);
+    void Update(float dt);
     void Render();
 
     // Destroy remaining resources and finish game
     void Destroy();
 private:
-    GameWindow win;
+    const int BULLET_BORDER_Y = 1000;
 
     float viewMtx[16];
 
+    // Textures
+    bgfx::TextureHandle spaceshipTexture;
+    bgfx::TextureHandle bulletTexture;
+
     // Entities
     entt::registry sceneRegistry;
-    entt::entity sprite;
-    int playerVelocity = 0;
-    float playerSpeed = 550.f;
+    entt::entity player;
+
 };
 
 
